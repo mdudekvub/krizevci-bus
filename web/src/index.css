@@ -90,7 +90,15 @@ button.link:focus-visible, .line-toggle input:focus-visible { outline: 2px solid
 .error { color: var(--error); font-size: 14px; margin: 0 0 8px; }
 
 /* Popup stajališta */
-.serves { margin: 4px 0 0; padding-left: 16px; }
+.stop-popup { font-family: "Barlow", system-ui, sans-serif; min-width: 210px; }
+.stop-name { display: block; font-size: 16px; margin-bottom: 6px; }
+.arrivals { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.arrivals li { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; font-size: 14px; }
+.arrival-time { font-weight: 700; font-variant-numeric: tabular-nums; color: #1d2a1f; }
+.arrival-time.live-time { color: #3f7d1e; display: inline-flex; align-items: center; gap: 5px; }
+.arrival-time.live-time::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.stop-popup .muted { color: #5d6b60; }
+.note { font-size: 12px; color: #5d6b60; margin: 8px 0 0; }
 
 /* Bus marker */
 .bus-marker { background: none; border: 0; }

@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using KrizevciBus.Api.Data;
 using KrizevciBus.Api.Hubs;
+using KrizevciBus.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,7 @@ builder.Services.AddSignalR()
     .AddJsonProtocol(o => o.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 builder.Services.AddOpenApi();
+builder.Services.AddScoped<EtaService>();
 builder.Services.AddDbContext<AppDbContext>(o =>
     o.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 

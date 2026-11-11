@@ -68,11 +68,15 @@ async Task DriveTrip(VehicleDto v, LineDto line, DirectionDto dir, CancellationT
         cum[i] = cum[i - 1] + Distance(pts[i - 1], pts[i]);
     var total = cum[^1];
 
-    // Međustanice (bez početnog i krajnjeg okretišta) i njihova udaljenost na trasi
-    var stops = dir.Stops.Skip(1).SkipLast(1)
-        .Select(s => (s.Name, At: cum[NearestIndex(pts, s.Lat, s.Lng)]))
-        .OrderBy(s => s.At)
-        .ToList();
+    // Međustanice (bez početnog i krajnjeg okretišta) i njihova udaljenost na trasi.
+    // Traži se redom od prethodne stanice, jer trasa može dvaput proći blizu istog mjesta.
+    var stops = new List<(string Name, double At)>();
+    int from = 0;
+    foreach (var s in dir.Stops.Skip(1).SkipLast(1))
+    {
+        from = NearestIndex(pts, s.Lat, s.Lng, from);
+        stops.Add((s.Name, cum[from]));
+    }
 
     var driveSeconds = TripMinutes * 60 - DwellSeconds * stops.Count;
     var speed = total / driveSeconds; // m/s
@@ -145,11 +149,11 @@ static (double Lat, double Lng, double Heading) PointAt(List<double[]> pts, doub
     return (a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, Bearing(a, b));
 }
 
-static int NearestIndex(List<double[]> pts, double lat, double lng)
+static int NearestIndex(List<double[]> pts, double lat, double lng, int from = 0)
 {
-    int best = 0;
+    int best = from;
     double bestD = double.MaxValue;
-    for (int i = 0; i < pts.Count; i++)
+    for (int i = from; i < pts.Count; i++)
     {
         var d = Distance(pts[i], [lat, lng]);
         if (d < bestD) { bestD = d; best = i; }

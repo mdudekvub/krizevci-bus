@@ -6,6 +6,11 @@ import { STALE_MS, directionLabel, lineNumber } from "../format";
 import { useNow } from "../useNow";
 
 const CENTER: [number, number] = [46.0235, 16.5425];
+// Karta se ne može pomaknuti izvan Križevaca ni odzumirati dalje od grada
+const BOUNDS: [[number, number], [number, number]] = [
+  [45.998, 16.515],
+  [46.048, 16.575],
+];
 
 interface Props {
   lines: Line[];
@@ -31,7 +36,16 @@ export default function BusMap({ lines, hidden, vehicles }: Props) {
   }, [visible]);
 
   return (
-    <MapContainer center={CENTER} zoom={15} className="map" zoomControl={false}>
+    <MapContainer
+      center={CENTER}
+      zoom={15}
+      minZoom={14}
+      maxZoom={19}
+      maxBounds={BOUNDS}
+      maxBoundsViscosity={1}
+      className="map"
+      zoomControl={false}
+    >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'

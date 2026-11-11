@@ -85,11 +85,23 @@ docker compose up -d
 cd backend
 dotnet user-secrets set "ConnectionStrings:Default" \
   "Host=localhost;Port=5432;Database=krizevcibus;Username=busadmin;Password=tvoja_lozinka"
+dotnet user-secrets set "Vehicles:ApiKey" "tvoj_api_kljuc"
 dotnet ef database update
 dotnet run
 ```
 
 API radi na `http://localhost:5050`. Kod prvog pokretanja baza se napuni podacima iz `backend/Data/seed.json`.
+
+Na serveru se ključ postavlja varijablom okoline `Vehicles__ApiKey`. Bez ključa endpoint za pozicije vraća 503.
+
+**3. Simulator**
+
+```bash
+cd simulator
+dotnet run -- --key tvoj_api_kljuc --speed 10
+```
+
+Ključ se može dati i varijablom okoline `BUS_API_KEY`.
 
 ## API
 
@@ -99,7 +111,7 @@ API radi na `http://localhost:5050`. Kod prvog pokretanja baza se napuni podacim
 | GET | `/api/lines/{id}` | Jedna linija |
 | GET | `/api/lines/{id}/departures?day=Weekday\|Weekend` | Vozni red (bez `day` vraća današnji) |
 | GET | `/api/vehicles` | Vozila sa zadnjom pozicijom |
-| POST | `/api/vehicles/{id}/position` | Nova pozicija vozila |
+| POST | `/api/vehicles/{id}/position` | Nova pozicija vozila (traži zaglavlje `X-Api-Key`) |
 
 **SignalR:** `/hubs/vehicles`, događaj `VehicleUpdated` šalje se nakon svake nove pozicije.
 
@@ -108,6 +120,7 @@ Primjer:
 ```bash
 curl -X POST http://localhost:5050/api/vehicles/1/position \
   -H "Content-Type: application/json" \
+  -H "X-Api-Key: tvoj_api_kljuc" \
   -d '{"lat":46.02,"lng":16.54,"speed":30,"heading":90,"direction":"ToKolodvor"}'
 ```
 
@@ -120,9 +133,9 @@ curl -X POST http://localhost:5050/api/vehicles/1/position \
 - [x] Simulator vožnje
 - [x] React web s kartom
 - [ ] PWA
-- [ ] Procjena dolaska busa na stanicu
-- [ ] Zaštita endpointa za pozicije (API ključ)
-- [ ] Trasa po stvarnim ulicama
+- [x] Procjena dolaska busa na stanicu
+- [x] Zaštita endpointa za pozicije (API ključ)
+- [x] Trasa po stvarnim ulicama
 - [ ] Testno razdoblje sa stvarnim podacima
 - [ ] iOS i Android aplikacije
 

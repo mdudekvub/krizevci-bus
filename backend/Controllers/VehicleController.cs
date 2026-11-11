@@ -1,3 +1,4 @@
+using KrizevciBus.Api.Auth;
 using KrizevciBus.Api.Data;
 using KrizevciBus.Api.Dtos;
 using KrizevciBus.Api.Hubs;
@@ -23,9 +24,9 @@ public class VehiclesController(AppDbContext db, IHubContext<VehicleHub> hub) : 
         return vehicles.Select(ToDto).ToList();
     }
 
-    // Prima poziciju od simulatora (kasnije od busa).
-    // TODO: zaštititi API ključem prije puštanja online.
+    // Prima poziciju od simulatora (kasnije od busa). Traži X-Api-Key.
     [HttpPost("{id:int}/position")]
+    [RequireApiKey]
     public async Task<IActionResult> UpdatePosition(int id, PositionUpdateDto dto)
     {
         if (dto.Lat is < -90 or > 90 || dto.Lng is < -180 or > 180)

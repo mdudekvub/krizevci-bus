@@ -6,6 +6,8 @@ using System.Text.Json;
 //   dotnet run                       -> stvarna brzina (krug traje 40 min)
 //   dotnet run -- --speed 10         -> 10x brže, za testiranje
 //   dotnet run -- --api http://localhost:5050
+//
+// API ključ: --key TVOJ_KLJUC ili varijabla okoline BUS_API_KEY
 
 const double TripMinutes = 18;     // vožnja od okretišta do okretišta, uključujući stajanja
 const double DwellSeconds = 20;    // stajanje na stanici
@@ -15,8 +17,16 @@ const double TickSeconds = 1;      // koliko često se šalje pozicija (stvarno 
 var apiUrl = GetArg("--api") ?? "http://localhost:5050";
 var speedFactor = double.Parse(GetArg("--speed") ?? "1", CultureInfo.InvariantCulture);
 
+var apiKey = GetArg("--key") ?? Environment.GetEnvironmentVariable("BUS_API_KEY");
+if (string.IsNullOrWhiteSpace(apiKey))
+{
+    Console.WriteLine("Nedostaje API ključ. Pokreni s --key KLJUC ili postavi BUS_API_KEY.");
+    return;
+}
+
 var json = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 var http = new HttpClient { BaseAddress = new Uri(apiUrl) };
+http.DefaultRequestHeaders.Add("X-Api-Key", apiKey);
 
 List<LineDto> lines;
 List<VehicleDto> vehicles;
@@ -116,7 +126,10 @@ async Task Send(VehicleDto v, double lat, double lng, double speedKmh, double he
     {
         var res = await http.PostAsJsonAsync($"api/vehicles/{v.Id}/position",
             new { lat, lng, speed = Math.Round(speedKmh, 1), heading = Math.Round(heading), direction }, json, ct);
-        if (!res.IsSuccessStatusCode) Log(v, $"API vratio {(int)res.StatusCode}");
+        if (res.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            Log(v, "API odbio ključ (401). Provjeri da je isti kao Vehicles:ApiKey u backendu.");
+        else if (!res.IsSuccessStatusCode)
+            Log(v, $"API vratio {(int)res.StatusCode}");
     }
     catch (HttpRequestException)
     {

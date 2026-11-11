@@ -26,10 +26,12 @@ builder.Services.AddCors(o => o.AddPolicy("web", p => p
 
 var app = builder.Build();
 
-// Puni bazu iz Data/seed.json ako je prazna
+// Primijeni migracije (na serveru nema ručnog "dotnet ef database update")
+// i napuni bazu iz Data/seed.json ako je prazna
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await db.Database.MigrateAsync();
     await DbSeeder.SeedAsync(db,
         Path.Combine(app.Environment.ContentRootPath, "Data", "seed.json"));
 }

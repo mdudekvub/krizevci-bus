@@ -1,0 +1,60 @@
+# Produkcija: docker compose -f docker-compose.prod.yml up -d --build
+# Vrijednosti dolaze iz .env (vidi .env.example)
+name: krizevci-bus-prod
+
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: krizevcibus
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d krizevcibus"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Default: Host=db;Port=5432;Database=krizevcibus;Username=${DB_USER};Password=${DB_PASSWORD}
+      Vehicles__ApiKey: ${BUS_API_KEY}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Dok nema pravih busova, simulator vozi po voznom redu. Kasnije se ova usluga makne.
+  simulator:
+    build: ./simulator
+    restart: unless-stopped
+    command: ["--api", "http://api:8080", "--speed", "1"]
+    environment:
+      BUS_API_KEY: ${BUS_API_KEY}
+    depends_on:
+      - api
+
+  web:
+    build: ./web
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+
+volumes:
+  db_data:
+  caddy_data:
+  caddy_config:

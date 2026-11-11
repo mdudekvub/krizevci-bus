@@ -4,6 +4,7 @@ import L from "leaflet";
 import type { Line, Stop, Vehicle } from "../types";
 import { STALE_MS, directionLabel, lineNumber } from "../format";
 import { useNow } from "../useNow";
+import StopPopup from "./StopPopup";
 
 const CENTER: [number, number] = [46.0235, 16.5425];
 // Karta se ne može pomaknuti izvan Križevaca ni odzumirati dalje od grada
@@ -22,16 +23,10 @@ export default function BusMap({ lines, hidden, vehicles }: Props) {
   const now = useNow(5000);
   const visible = useMemo(() => lines.filter((l) => !hidden.has(l.id)), [lines, hidden]);
 
-  // Svako fizičko stajalište jednom, s popisom linija koje tamo staju
+  // Svako fizičko stajalište jednom
   const stops = useMemo(() => {
-    const map = new Map<string, { stop: Stop; serves: string[] }>();
-    for (const l of visible)
-      for (const d of l.directions)
-        for (const s of d.stops) {
-          const entry = map.get(s.code) ?? { stop: s, serves: [] };
-          entry.serves.push(`${l.name} ${directionLabel(d.direction)}`);
-          map.set(s.code, entry);
-        }
+    const map = new Map<string, Stop>();
+    for (const l of visible) for (const d of l.directions) for (const s of d.stops) map.set(s.code, s);
     return [...map.values()];
   }, [visible]);
 
@@ -70,7 +65,7 @@ export default function BusMap({ lines, hidden, vehicles }: Props) {
         )),
       )}
 
-      {stops.map(({ stop, serves }) => (
+      {stops.map((stop) => (
         <CircleMarker
           key={stop.code}
           center={[stop.lat, stop.lng]}
@@ -78,12 +73,7 @@ export default function BusMap({ lines, hidden, vehicles }: Props) {
           pathOptions={{ color: "#1d2a1f", weight: 2, fillColor: "#ffffff", fillOpacity: 1 }}
         >
           <Popup>
-            <strong>{stop.name}</strong>
-            <ul className="serves">
-              {serves.map((s) => (
-                <li key={s}>{s}</li>
-              ))}
-            </ul>
+            <StopPopup stop={stop} />
           </Popup>
         </CircleMarker>
       ))}

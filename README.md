@@ -1,7 +1,7 @@
 # Križevci Bus
 
 Praćenje gradskih autobusa u Križevcima u stvarnom vremenu: gdje je bus sada, koje su sljedeće stanice i kada polazi.
-![Karta s linijama i busovima uživo](docs/TestSimulacije.png)
+![Karta s linijama i busovima uživo](docs/Verzija3.png)
 
 > Projekt je u razvoju. Trenutno pozicije busova dolaze iz simulatora; u testnoj fazi planira se spajanje na stvarne GPS podatke.
 

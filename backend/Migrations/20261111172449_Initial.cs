@@ -32,6 +32,7 @@ namespace KrizevciBus.Api.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Code = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Lat = table.Column<double>(type: "double precision", nullable: false),
                     Lng = table.Column<double>(type: "double precision", nullable: false)
@@ -42,12 +43,35 @@ namespace KrizevciBus.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Departures",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    LineId = table.Column<int>(type: "integer", nullable: false),
+                    Direction = table.Column<string>(type: "text", nullable: false),
+                    DayType = table.Column<string>(type: "text", nullable: false),
+                    Time = table.Column<TimeOnly>(type: "time without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Departures", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Departures_Lines_LineId",
+                        column: x => x.LineId,
+                        principalTable: "Lines",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RoutePoints",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     LineId = table.Column<int>(type: "integer", nullable: false),
+                    Direction = table.Column<string>(type: "text", nullable: false),
                     Sequence = table.Column<int>(type: "integer", nullable: false),
                     Lat = table.Column<double>(type: "double precision", nullable: false),
                     Lng = table.Column<double>(type: "double precision", nullable: false)
@@ -71,6 +95,7 @@ namespace KrizevciBus.Api.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
                     LineId = table.Column<int>(type: "integer", nullable: true),
+                    CurrentDirection = table.Column<string>(type: "text", nullable: true),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -88,12 +113,13 @@ namespace KrizevciBus.Api.Migrations
                 columns: table => new
                 {
                     LineId = table.Column<int>(type: "integer", nullable: false),
+                    Direction = table.Column<string>(type: "text", nullable: false),
                     Sequence = table.Column<int>(type: "integer", nullable: false),
                     StopId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LineStops", x => new { x.LineId, x.Sequence });
+                    table.PrimaryKey("PK_LineStops", x => new { x.LineId, x.Direction, x.Sequence });
                     table.ForeignKey(
                         name: "FK_LineStops_Lines_LineId",
                         column: x => x.LineId,
@@ -131,14 +157,26 @@ namespace KrizevciBus.Api.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Departures_LineId_Direction_DayType_Time",
+                table: "Departures",
+                columns: new[] { "LineId", "Direction", "DayType", "Time" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LineStops_StopId",
                 table: "LineStops",
                 column: "StopId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RoutePoints_LineId_Sequence",
+                name: "IX_RoutePoints_LineId_Direction_Sequence",
                 table: "RoutePoints",
-                columns: new[] { "LineId", "Sequence" },
+                columns: new[] { "LineId", "Direction", "Sequence" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Stops_Code",
+                table: "Stops",
+                column: "Code",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -150,6 +188,9 @@ namespace KrizevciBus.Api.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Departures");
+
             migrationBuilder.DropTable(
                 name: "LineStops");
 

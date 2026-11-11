@@ -1,0 +1,72 @@
+{
+  "stops": [
+    { "code": "GROB",    "name": "Groblje",              "lat": 0, "lng": 0 },
+    { "code": "KOLO",    "name": "Željeznički kolodvor", "lat": 0, "lng": 0 },
+
+    { "code": "MARK_K",  "name": "Markovićeva",          "lat": 0, "lng": 0 },
+    { "code": "MARK_G",  "name": "Markovićeva",          "lat": 0, "lng": 0 },
+    { "code": "RACK_K",  "name": "Račkog sjever",        "lat": 0, "lng": 0 },
+    { "code": "RACK_G",  "name": "Račkog sjever",        "lat": 0, "lng": 0 },
+    { "code": "WOOD_K",  "name": "Wood",                 "lat": 0, "lng": 0 },
+    { "code": "WOOD_G",  "name": "Wood",                 "lat": 0, "lng": 0 },
+    { "code": "ISTR_K",  "name": "Istarska",             "lat": 0, "lng": 0 },
+    { "code": "ISTR_G",  "name": "Istarska",             "lat": 0, "lng": 0 },
+    { "code": "HDOM_K",  "name": "Hrvatski dom",         "lat": 0, "lng": 0 },
+    { "code": "HDOM_G",  "name": "Hrvatski dom",         "lat": 0, "lng": 0 },
+    { "code": "POST_K",  "name": "Pošta",                "lat": 0, "lng": 0 },
+    { "code": "POST_G",  "name": "Pošta",                "lat": 0, "lng": 0 },
+    { "code": "ZAGR_K",  "name": "Zagrebačka",           "lat": 0, "lng": 0 },
+    { "code": "ZAGR_G",  "name": "Zagrebačka",           "lat": 0, "lng": 0 },
+    { "code": "AMK_K",   "name": "Auto moto klub",       "lat": 0, "lng": 0 },
+    { "code": "AMK_G",   "name": "Auto moto klub",       "lat": 0, "lng": 0 },
+    { "code": "TLORA_K", "name": "Teslina Lora",         "lat": 0, "lng": 0 },
+    { "code": "TLORA_G", "name": "Teslina Lora",         "lat": 0, "lng": 0 },
+    { "code": "TJUG_K",  "name": "Teslina jug",          "lat": 0, "lng": 0 },
+    { "code": "TJUG_G",  "name": "Teslina jug",          "lat": 0, "lng": 0 },
+    { "code": "VATR_K",  "name": "Vatrogasna postaja",   "lat": 0, "lng": 0 },
+    { "code": "VATR_G",  "name": "Vatrogasna postaja",   "lat": 0, "lng": 0 },
+    { "code": "CENT_K",  "name": "Centar",               "lat": 0, "lng": 0 },
+    { "code": "CENT_G",  "name": "Centar",               "lat": 0, "lng": 0 },
+    { "code": "MGUP_K",  "name": "Matije Gupca",         "lat": 0, "lng": 0 },
+    { "code": "MGUP_G",  "name": "Matije Gupca",         "lat": 0, "lng": 0 },
+    { "code": "TOMI_K",  "name": "Tomislavova",          "lat": 0, "lng": 0 },
+    { "code": "TOMI_G",  "name": "Tomislavova",          "lat": 0, "lng": 0 },
+    { "code": "KIEP_K",  "name": "Kiepachova",           "lat": 0, "lng": 0 },
+    { "code": "KIEP_G",  "name": "Kiepachova",           "lat": 0, "lng": 0 }
+  ],
+
+  "lines": [
+    {
+      "name": "Linija 1",
+      "color": "#7AB648",
+      "directions": [
+        { "direction": "ToKolodvor", "stops": ["GROB", "MARK_K", "RACK_K", "WOOD_K", "ISTR_K", "HDOM_K", "POST_K", "ZAGR_K", "AMK_K", "TLORA_K", "TJUG_K", "KOLO"] },
+        { "direction": "ToGroblje",  "stops": ["KOLO", "TJUG_G", "TLORA_G", "AMK_G", "ZAGR_G", "POST_G", "HDOM_G", "ISTR_G", "WOOD_G", "RACK_G", "MARK_G", "GROB"] }
+      ],
+      "departures": [
+        { "day": "Weekday", "direction": "ToKolodvor", "times": ["05:30","06:10","06:50","07:30","08:10","08:50","09:30","10:10","10:50","11:30","12:50","13:30","14:10","14:50","15:30","16:10","17:30","18:10","18:50","19:30","20:10","20:50","21:30"] },
+        { "day": "Weekday", "direction": "ToGroblje",  "times": ["05:50","06:30","07:10","07:50","08:30","09:10","09:50","10:30","11:10","12:30","13:10","13:50","14:30","15:10","15:50","17:10","17:50","18:30","19:10","19:50","20:30","21:10"] },
+        { "day": "Weekend", "direction": "ToKolodvor", "times": ["07:50","08:30","09:10","09:50","10:30","11:10","12:30","13:10","13:50","14:30","15:10","15:50","17:10","17:50","18:30","19:10","19:50","20:30"] },
+        { "day": "Weekend", "direction": "ToGroblje",  "times": ["08:10","08:50","09:30","10:10","10:50","11:30","12:50","13:30","14:10","14:50","15:30","16:10","17:30","18:10","18:50","19:30","20:10","20:50"] }
+      ]
+    },
+    {
+      "name": "Linija 2",
+      "color": "#3A8FD0",
+      "directions": [
+        { "direction": "ToKolodvor", "stops": ["GROB", "MARK_K", "RACK_K", "VATR_K", "CENT_K", "POST_K", "MGUP_K", "TOMI_K", "KIEP_K", "TJUG_K", "KOLO"] },
+        { "direction": "ToGroblje",  "stops": ["KOLO", "TJUG_G", "KIEP_G", "TOMI_G", "MGUP_G", "POST_G", "CENT_G", "VATR_G", "RACK_G", "MARK_G", "GROB"] }
+      ],
+      "departures": [
+        { "day": "Weekday", "direction": "ToKolodvor", "times": ["05:10","05:50","06:30","07:10","07:50","08:30","09:10","09:50","10:30","11:50","12:30","13:10","13:50","14:30","15:10","15:50","16:30","17:10","17:50","19:10","19:50","20:30","21:10"] },
+        { "day": "Weekday", "direction": "ToGroblje",  "times": ["05:30","06:10","06:50","07:30","08:10","08:50","09:30","10:10","11:30","12:10","12:50","13:30","14:10","14:50","15:30","16:10","16:50","17:30","18:50","19:30","20:10","20:50","21:30"] }
+      ]
+    }
+  ],
+
+  "vehicles": [
+    { "name": "Bus 1", "line": "Linija 1" },
+    { "name": "Bus 2", "line": "Linija 2" },
+    { "name": "Bus 3", "line": null }
+  ]
+}

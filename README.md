@@ -1,6 +1,7 @@
 # Križevci Bus
 
 Praćenje gradskih autobusa u Križevcima u stvarnom vremenu: gdje je bus sada, koje su sljedeće stanice i kada polazi.
+![Karta s linijama i busovima uživo](docs/TestSimulacije.png)
 
 > Projekt je u razvoju. Trenutno pozicije busova dolaze iz simulatora; u testnoj fazi planira se spajanje na stvarne GPS podatke.
 
@@ -116,8 +117,8 @@ curl -X POST http://localhost:5050/api/vehicles/1/position \
 - [x] REST API
 - [x] SignalR za pozicije uživo
 - [x] Koordinate stajališta
-- [ ] Simulator vožnje
-- [ ] React web s kartom
+- [x] Simulator vožnje
+- [x] React web s kartom
 - [ ] PWA
 - [ ] Procjena dolaska busa na stanicu
 - [ ] Zaštita endpointa za pozicije (API ključ)

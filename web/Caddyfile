@@ -1,0 +1,19 @@
+# DOMAIN dolazi iz .env (npr. krizevcibus.me). Caddy sam izvadi HTTPS certifikat.
+{$DOMAIN} {
+	encode zstd gzip
+
+	# API i SignalR (WebSocket se prosljeđuje automatski)
+	handle /api/* {
+		reverse_proxy api:8080
+	}
+	handle /hubs/* {
+		reverse_proxy api:8080
+	}
+
+	# React aplikacija
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}

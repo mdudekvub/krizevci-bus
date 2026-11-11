@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/backend/">
+    <Project Path="backend/KrizevciBus.Api.csproj" />
+  </Folder>
+  <Folder Name="/simulator/">
+    <Project Path="simulator/KrizevciBus.Simulator.csproj" />
+  </Folder>
+</Solution>

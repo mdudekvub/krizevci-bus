@@ -1,56 +1,14 @@
-export type Direction = "ToKolodvor" | "ToGroblje";
-export type DayType = "Weekday" | "Weekend";
+import type { Arrival, Departure, Line, Vehicle } from "./types";
 
-export interface Stop {
-  id: number;
-  code: string;
-  name: string;
-  lat: number;
-  lng: number;
+export const API_URL: string = import.meta.env.VITE_API_URL ?? "http://localhost:5050";
+
+async function get<T>(path: string): Promise<T> {
+  const res = await fetch(API_URL + path);
+  if (!res.ok) throw new Error(`${path}: ${res.status}`);
+  return res.json() as Promise<T>;
 }
 
-export interface LineDirection {
-  direction: Direction;
-  stops: Stop[];
-  route: [number, number][];
-}
-
-export interface Line {
-  id: number;
-  name: string;
-  color: string;
-  directions: LineDirection[];
-}
-
-export interface Position {
-  lat: number;
-  lng: number;
-  speed: number;
-  heading: number;
-  timestamp: string;
-}
-
-export interface Vehicle {
-  id: number;
-  name: string;
-  lineId: number | null;
-  direction: Direction | null;
-  isActive: boolean;
-  position: Position | null;
-}
-
-export interface Departure {
-  direction: Direction;
-  dayType: DayType;
-  time: string;
-}
-
-export interface Arrival {
-  lineId: number;
-  lineName: string;
-  color: string;
-  direction: Direction;
-  minutes: number;
-  live: boolean; // true = prema stvarnom busu, false = po voznom redu
-  vehicleName: string | null;
-}
+export const getLines = () => get<Line[]>("/api/lines");
+export const getVehicles = () => get<Vehicle[]>("/api/vehicles");
+export const getDepartures = (lineId: number) => get<Departure[]>(`/api/lines/${lineId}/departures`);
+export const getArrivals = (stopCode: string) => get<Arrival[]>(`/api/stops/${stopCode}/arrivals`);

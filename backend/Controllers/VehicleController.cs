@@ -1,14 +1,16 @@
 using KrizevciBus.Api.Data;
 using KrizevciBus.Api.Dtos;
+using KrizevciBus.Api.Hubs;
 using KrizevciBus.Api.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace KrizevciBus.Api.Controllers;
 
 [ApiController]
 [Route("api/vehicles")]
-public class VehiclesController(AppDbContext db) : ControllerBase
+public class VehiclesController(AppDbContext db, IHubContext<VehicleHub> hub) : ControllerBase
 {
     [HttpGet]
     public async Task<List<VehicleDto>> GetAll()
@@ -43,6 +45,10 @@ public class VehiclesController(AppDbContext db) : ControllerBase
             vehicle.CurrentDirection = dto.Direction;
 
         await db.SaveChangesAsync();
+
+        // Javi svim spojenim klijentima novu poziciju
+        await hub.Clients.All.SendAsync("VehicleUpdated", ToDto(vehicle));
+
         return NoContent();
     }
 

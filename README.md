@@ -115,7 +115,7 @@ curl -X POST http://localhost:5050/api/vehicles/1/position \
 - [x] Baza, modeli i vozni red
 - [x] REST API
 - [x] SignalR za pozicije uživo
-- [ ] Koordinate stajališta
+- [x ] Koordinate stajališta
 - [ ] Simulator vožnje
 - [ ] React web s kartom
 - [ ] PWA

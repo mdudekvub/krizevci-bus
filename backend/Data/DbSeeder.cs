@@ -8,7 +8,7 @@ namespace KrizevciBus.Api.Data;
 public static class DbSeeder
 {
     record SeedStop(string Code, string Name, double Lat, double Lng);
-    record SeedDirection(Direction Direction, List<string> Stops);
+    record SeedDirection(Direction Direction, List<string> Stops, List<double[]>? Route);
     record SeedDepartures(DayType Day, Direction Direction, List<string> Times);
     record SeedLine(string Name, string Color, List<SeedDirection> Directions, List<SeedDepartures> Departures);
     record SeedVehicle(string Name, string? Line);
@@ -40,10 +40,17 @@ public static class DbSeeder
                             $"Nepoznata stanica '{d.Stops[i]}' u {l.Name} ({d.Direction})");
 
                     line.LineStops.Add(new LineStop { Stop = stop, Direction = d.Direction, Sequence = i });
-                    // Privremeno: trasa = ravna linija između stanica
-                    line.RoutePoints.Add(new RoutePoint
-                        { Direction = d.Direction, Sequence = i, Lat = stop.Lat, Lng = stop.Lng });
                 }
+
+                // Trasa po ulicama iz seed.json (tools/generate-routes.mjs),
+                // a ako je nema, ravna linija od stanice do stanice
+                var route = d.Route is { Count: >= 2 }
+                    ? d.Route
+                    : d.Stops.Select(c => new[] { stops[c].Lat, stops[c].Lng }).ToList();
+
+                for (int i = 0; i < route.Count; i++)
+                    line.RoutePoints.Add(new RoutePoint
+                        { Direction = d.Direction, Sequence = i, Lat = route[i][0], Lng = route[i][1] });
             }
 
             foreach (var dep in l.Departures)

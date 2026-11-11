@@ -1,0 +1,130 @@
+:root {
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --text: #1d2a1f;
+  --muted: #5d6b60;
+  --line: #dde4dc;
+  --accent: #7ab648;
+  --error: #b3261e;
+  --shadow: 0 6px 24px rgba(29, 42, 31, 0.18);
+  font-family: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141a15;
+    --panel: #1c241d;
+    --text: #e6ede6;
+    --muted: #9aa89c;
+    --line: #2e3a30;
+    --error: #ff8a80;
+    --shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+
+.app { position: relative; height: 100dvh; }
+.map { position: absolute; inset: 0; }
+
+/* Panel */
+.panel {
+  position: absolute;
+  z-index: 1000;
+  top: 12px;
+  left: 12px;
+  width: 320px;
+  max-height: calc(100% - 24px);
+  overflow-y: auto;
+  background: var(--panel);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 16px 18px;
+}
+.panel header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.panel h1 { font-size: 22px; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+.panel h2 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; color: var(--muted); }
+.panel h3 { font-size: 14px; font-weight: 600; margin: 0 0 4px; }
+.panel section + section { border-top: 1px solid var(--line); }
+
+.live { font-size: 13px; font-weight: 600; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+.live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.live.on { color: var(--accent); }
+.live.on::before { background: var(--accent); animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: 0.35; } }
+@media (prefers-reduced-motion: reduce) { .live.on::before { animation: none; } }
+
+.line { padding: 6px 0; }
+.line-row { display: flex; align-items: center; justify-content: space-between; }
+.line-toggle { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 16px; cursor: pointer; }
+.line-toggle input { width: 16px; height: 16px; accent-color: var(--accent); }
+
+.swatch {
+  display: inline-grid; place-items: center;
+  width: 26px; height: 26px; border-radius: 7px;
+  color: #fff; font-weight: 700; font-size: 14px;
+}
+.swatch.small { width: 22px; height: 22px; font-size: 12px; border-radius: 6px; flex-shrink: 0; }
+
+button.link {
+  font: inherit; font-size: 14px; font-weight: 600;
+  background: none; border: 0; padding: 4px 6px; border-radius: 6px;
+  color: var(--text); text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+}
+button.link:focus-visible, .line-toggle input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.departures { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 8px 0 6px 26px; }
+.departures ol { list-style: none; margin: 0; padding: 0; font-variant-numeric: tabular-nums; }
+.departures li { font-size: 15px; padding: 1px 0; }
+.departures li:first-child { font-weight: 700; }
+
+.buses ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.buses li { display: flex; align-items: center; gap: 10px; font-size: 15px; }
+
+.muted { color: var(--muted); font-size: 14px; margin: 0; }
+.error { color: var(--error); font-size: 14px; margin: 0 0 8px; }
+
+/* Popup stajališta */
+.serves { margin: 4px 0 0; padding-left: 16px; }
+
+/* Bus marker */
+.bus-marker { background: none; border: 0; }
+.leaflet-marker-icon.bus-marker { transition: transform 1s linear; }
+.leaflet-zoom-anim .leaflet-marker-icon.bus-marker { transition: none; }
+@media (prefers-reduced-motion: reduce) { .leaflet-marker-icon.bus-marker { transition: none; } }
+
+.bus {
+  position: relative;
+  width: 36px; height: 36px;
+  display: grid; place-items: center;
+}
+.bus span {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--c); color: #fff;
+  font: 700 14px "Barlow", system-ui, sans-serif;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  position: relative; z-index: 1;
+}
+.bus.stale span { background: #8a948c; }
+.bus-arrow { position: absolute; inset: 0; }
+.bus-arrow::before {
+  content: ""; position: absolute; left: 50%; top: -3px; transform: translateX(-50%);
+  border-left: 6px solid transparent; border-right: 6px solid transparent;
+  border-bottom: 9px solid var(--c);
+}
+
+/* Mobitel: panel kao donji list */
+@media (max-width: 640px) {
+  .panel {
+    top: auto; left: 8px; right: 8px; bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    width: auto; max-height: 45%;
+  }
+  .leaflet-bottom.leaflet-right { bottom: 46%; }
+}

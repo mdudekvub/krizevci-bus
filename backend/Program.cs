@@ -10,6 +10,13 @@ builder.Services.AddDbContext<AppDbContext>(o =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await DbSeeder.SeedAsync(db,
+        Path.Combine(app.Environment.ContentRootPath, "Data", "seed.json"));
+}
+
 if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 

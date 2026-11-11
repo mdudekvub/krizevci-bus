@@ -22,6 +22,36 @@ namespace KrizevciBus.Api.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("KrizevciBus.Api.Models.Departure", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DayType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Direction")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("LineId")
+                        .HasColumnType("integer");
+
+                    b.Property<TimeOnly>("Time")
+                        .HasColumnType("time without time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LineId", "Direction", "DayType", "Time")
+                        .IsUnique();
+
+                    b.ToTable("Departures");
+                });
+
             modelBuilder.Entity("KrizevciBus.Api.Models.Line", b =>
                 {
                     b.Property<int>("Id")
@@ -48,13 +78,16 @@ namespace KrizevciBus.Api.Migrations
                     b.Property<int>("LineId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Direction")
+                        .HasColumnType("text");
+
                     b.Property<int>("Sequence")
                         .HasColumnType("integer");
 
                     b.Property<int>("StopId")
                         .HasColumnType("integer");
 
-                    b.HasKey("LineId", "Sequence");
+                    b.HasKey("LineId", "Direction", "Sequence");
 
                     b.HasIndex("StopId");
 
@@ -68,6 +101,10 @@ namespace KrizevciBus.Api.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Direction")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<double>("Lat")
                         .HasColumnType("double precision");
@@ -83,7 +120,7 @@ namespace KrizevciBus.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LineId", "Sequence")
+                    b.HasIndex("LineId", "Direction", "Sequence")
                         .IsUnique();
 
                     b.ToTable("RoutePoints");
@@ -97,6 +134,10 @@ namespace KrizevciBus.Api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<double>("Lat")
                         .HasColumnType("double precision");
 
@@ -109,6 +150,9 @@ namespace KrizevciBus.Api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Code")
+                        .IsUnique();
+
                     b.ToTable("Stops");
                 });
 
@@ -119,6 +163,9 @@ namespace KrizevciBus.Api.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CurrentDirection")
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
@@ -160,6 +207,15 @@ namespace KrizevciBus.Api.Migrations
                     b.HasKey("VehicleId");
 
                     b.ToTable("VehiclePositions");
+                });
+
+            modelBuilder.Entity("KrizevciBus.Api.Models.Departure", b =>
+                {
+                    b.HasOne("KrizevciBus.Api.Models.Line", null)
+                        .WithMany("Departures")
+                        .HasForeignKey("LineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("KrizevciBus.Api.Models.LineStop", b =>
@@ -210,6 +266,8 @@ namespace KrizevciBus.Api.Migrations
 
             modelBuilder.Entity("KrizevciBus.Api.Models.Line", b =>
                 {
+                    b.Navigation("Departures");
+
                     b.Navigation("LineStops");
 
                     b.Navigation("RoutePoints");

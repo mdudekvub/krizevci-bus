@@ -44,3 +44,12 @@ export interface Departure {
   dayType: DayType;
   time: string;
 }
+export interface Arrival {
+  lineId: number;
+  lineName: string;
+  color: string;
+  direction: Direction;
+  minutes: number;
+  live: boolean;
+  vehicleName: string | null;
+}
